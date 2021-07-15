@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <ul>
+        {% for train in trains %}
+      <li><p><b>{{ train.number }}</b> {{ train.from_city}} - {{ train.to_city}}. Travel time - {{ train.travel_time}}.</p></li>
+        {% endfor %}
+    </ul>    
+    <a class="btn btn-primary" href="{% url 'add-train' %}" role="button">Add train</a>
+</div>
+{% endblock content %}

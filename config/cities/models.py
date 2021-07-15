@@ -13,3 +13,6 @@ class City(models.Model):
         verbose_name_plural = 'Cities'
         ordering = ['title']
 
+    @staticmethod
+    def get_all_cities():
+        return City.objects.all()
