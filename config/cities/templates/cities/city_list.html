@@ -7,6 +7,6 @@
         <li><p>{{ city.title }}</p></li>
         {% endfor %}
     </ul>    
-    <a class="btn btn-primary" href="{% url 'add-city' %}" role="button">Add city</a>
+    <a class="btn btn-primary" href="{% url 'cities:add-city' %}" role="button">Add city</a>
 </div>
 {% endblock content %}

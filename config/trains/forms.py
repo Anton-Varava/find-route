@@ -7,7 +7,7 @@ class TrainCreateForm(forms.ModelForm):
     number = forms.CharField(label='Train №', widget=forms.TextInput(attrs={
         'placeholder': 'Enter the number of the train'
     }))
-    travel_time = forms.IntegerField()
+    travel_time = forms.IntegerField(min_value=1)
     from_city = forms.ModelChoiceField(queryset=City.get_all_cities())
     to_city = forms.ModelChoiceField(queryset=City.get_all_cities())
 

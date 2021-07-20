@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+
 from cities.models import City
 
 
@@ -14,6 +16,9 @@ class Train(models.Model):
     def __str__(self):
         return f'Train №{self.number} {self.from_city}-{self.to_city}'
 
+    def clean(self):
+        if self.from_city == self.to_city:
+            raise ValidationError('Departure city can\'t be the same with arrival city')
 
 
 
