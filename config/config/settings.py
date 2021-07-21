@@ -44,7 +44,9 @@ INSTALLED_APPS = [
 
     # Created apps
     'cities',
-    'trains'
+    'trains',
+    'routes'
+
 ]
 
 MIDDLEWARE = [
