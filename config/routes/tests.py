@@ -1,11 +1,14 @@
 from django.test import TestCase
 from trains.models import Train
 from cities.models import City
-from .utils import make_graph, get_all_ways, find_fastest_way
+from .utils import make_graph, get_possible_ways, find_fastest_way
 
 
 # Create your tests here.
 class RoutesTestCase(TestCase):
+    __kharkiv_id = 1
+    __kiev_id = 3
+
     def setUp(self):
         kharkiv = City.objects.create(title='kharkiv')
         poltava = City.objects.create(title='Poltava')
@@ -25,15 +28,38 @@ class RoutesTestCase(TestCase):
                                            from_city=dnipro,
                                            to_city=kiyv)
 
-    def test_find_way(self):
+    @staticmethod
+    def __get_ways(from_city=__kharkiv_id, to_city=__kiev_id):
         graph = make_graph(Train.objects.all())
-        all_ways = list(get_all_ways(graph=graph, from_city=1, to_city=3))
+        all_ways = list(get_possible_ways(graph=graph, from_city=from_city, to_city=to_city))
+        return all_ways
+
+    @staticmethod
+    def __get_train_object_by_id(_id):
+        return Train.objects.get(id=_id)
+
+    @staticmethod
+    def __get_city_object_by_id(_id):
+        return City.objects.get(id=_id)
+
+    def test_find_way(self):
+        all_ways = RoutesTestCase.__get_ways(
+            from_city=RoutesTestCase.__get_city_object_by_id(RoutesTestCase.__kharkiv_id),
+            to_city=RoutesTestCase.__get_city_object_by_id(RoutesTestCase.__kiev_id))
+        k_p = RoutesTestCase.__get_train_object_by_id(_id=1)
+        p_k = RoutesTestCase.__get_train_object_by_id(_id=2)
+        k_d = RoutesTestCase.__get_train_object_by_id(_id=3)
+        d_k = RoutesTestCase.__get_train_object_by_id(_id=4)
 
         self.assertEqual(2, len(all_ways))
-        self.assertEqual(True, ([1, 2, 3] in all_ways))
-        self.assertEqual(True, ([1, 4, 3] in all_ways))
+        self.assertEqual(True, ([k_p, p_k] in all_ways))
+        self.assertEqual(True, ([k_d, d_k] in all_ways))
 
     def test_find_fastest_way(self):
-        graph = make_graph(Train.objects.all())
-        all_ways = list(get_all_ways(graph=graph, from_city=1, to_city=3))
-        self.assertEqual([1, 4, 3], find_fastest_way(all_ways))
+        all_ways = RoutesTestCase.__get_ways(
+            from_city=RoutesTestCase.__get_city_object_by_id(RoutesTestCase.__kharkiv_id),
+            to_city=RoutesTestCase.__get_city_object_by_id(RoutesTestCase.__kiev_id))
+        k_p = RoutesTestCase.__get_train_object_by_id(_id=1)
+        p_k = RoutesTestCase.__get_train_object_by_id(_id=2)
+        self.assertEqual([k_p, p_k], find_fastest_way(all_ways)['fastest_route'])
+        self.assertEqual(5, find_fastest_way(all_ways)['fastest_time'])

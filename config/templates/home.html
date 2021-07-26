@@ -1,0 +1,38 @@
+{% extands 'base.html' %}
+{% block content %}
+
+
+<div class="container">
+	<h1>Routes Search</h1>
+	{% if possible_ways %}
+	<div class="row">
+		<h3>Possible routes from {{ from_city.title }} to {{ to_city.title}}</h3>
+		<ul>
+		{% for route in routes %}
+			<li>
+				{% if route|lenght == 1%}
+				{{route.0}}
+				{% else %}
+				<ul>
+					{% for train in route %}
+					<ol>{{ train }}</ol>
+					{% endfor %}
+				</ul>
+				{% endif %}
+			</li>
+		{% endfor%}
+		</ul>
+	</div>
+
+	{% endif%}
+
+	<div class="row">
+		<form method="POST" action="{%url find-routes %}">
+			{% csrt_token %}
+			{{ form|crispy}}
+			<button type="submit" class="btn btn-primary">Search</button>
+		</form>
+	</div>
+</div>
+
+{% endblock content %}
