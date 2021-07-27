@@ -6,7 +6,8 @@
 	<h1>Routes Search</h1>
 	
 	{% if possible_ways %}
-	<h3>Possible routes from {{ from_city.title }} to {{ to_city.title}}</h3>
+	<h3>Possible routes from {{ from_city.title }} to {{ to_city.title}}{%if through_cities %}
+	 through {{ through_cities|join:", " }}{% endif %}</h3>
 	<div class="row">		
 		<ul>
 		{% for route in possible_ways %}
