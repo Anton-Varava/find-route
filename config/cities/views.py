@@ -9,7 +9,7 @@ from .forms import CityCreateForm
 # Create your views here.
 class CityListView(ListView):
     model = City
-    paginate_by = 10
+    paginate_by = 15
     context_object_name = 'cities'
     ordering = ['title']
 

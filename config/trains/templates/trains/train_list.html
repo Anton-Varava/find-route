@@ -2,50 +2,31 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container">
-	<ul>
-		{% for train in trains %}
-		<li>
-			<div class="row">
-				<div class="col-sm">
-					<p><b>{{ train.number }}</b> {{ train.from_city}} - {{ train.to_city}}. Travel time - {{ train.travel_time}}.</p>
-				</div>
-				<div class="col-sm">
-					<a type="button" class="btn btn-secondary" href="{% url 'trains:update-train' pk=train.pk %}">
-						<i class="far fa-edit"></i>
-					</a>
-						
-									
-					
-					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteTrain">
-						Delete
-					</button>					
-
-					<!-- Modal deleteTrain -->
-					<div class="modal fade" id="deleteTrain" tabindex="-1" role="dialog" aria-labelledby="deleteTrainLabel" aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="deleteTrainLabel">Delete train</h5>
-
-								</div>
-								<div class="modal-body">
-									<p>Are you sure you want delete train - "{{ train }}"?</p>
-								</div>
-								<div class="modal-footer">
-									<form action="{% url 'trains:delete-train' pk=train.pk %}" method="POST">
-										{% csrf_token %}
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-										<button type="submit" class="btn btn-primary">Delete</button>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>   	
-				</div>
-			</li>
-			{% endfor %}
-		</ul>    
-		<a class="btn btn-primary" href="{% url 'trains:add-train' %}" role="button">Add train</a>
+<h1>Trains list</h1>
+<div class="row">
+	<div class="col-md-8 mx-auto">
+		<a class="btn btn-primary add-train-button" href="{% url 'trains:add-train' %}" role="button">Add train</a>
+		<table class="table table-sm trains-table">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">From</th>
+					<th scope="col">To</th>
+					<th scope="col">Travel time</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for train in trains %}
+				<tr>
+					<td><b>{{ train.number }}</b></td>
+					<td>{{ train.from_city}}</td>
+					<td>{{ train.to_city}}</td>
+					<td>{{ train.travel_time}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>			
+		</table>
 	</div>
-	{% endblock content %}
+	{% include 'pagination.html'%}
+</div>
+{% endblock content %}

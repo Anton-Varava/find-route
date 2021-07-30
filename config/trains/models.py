@@ -14,7 +14,7 @@ class Train(models.Model):
                                 related_name='to_city_set')
 
     def __str__(self):
-        return f'Train №{self.number} {self.from_city}-{self.to_city}'
+        return f'№{self.number} {self.from_city}-{self.to_city}'
 
     def clean(self):
         if self.from_city == self.to_city:

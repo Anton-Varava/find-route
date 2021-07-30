@@ -1,34 +1,40 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block head %}
+	<link rel="stylesheet" type="text/css" href="{% static 'routes/main.css' %}"></link>
+{% endblock head %}
+
 {% block content %}
 {% load crispy_forms_tags %}
-
-<div class="container">
-	<h1>Routes Search</h1>
-	
+<h1>Routes Search</h1>
+<div class="row">
 	{% if possible_ways %}
-	<h3>Possible routes from {{ from_city.title }} to {{ to_city.title}}{%if through_cities %}
-	 through {{ through_cities|join:", " }}{% endif %}</h3>
-	<div class="row">		
-		<ul>
-		{% for route in possible_ways %}
-			<li>
-				{% if route|length == 1%}
-				{{route.0}}
-				{% else %}
-				<ol>
-					{% for train in route %}
-					<li>{{ train }}</li>
-					{% endfor %}
-				</ol>
-				{% endif %}
-			</li>
-		{% endfor%}
-		</ul>
+	<div class="col-md-6 mx-auto">		
+		<h3>Possible routes from <b>{{ from_city.title }}</b> to <b>{{ to_city.title}}</b>{%if through_cities %}
+		through {{ through_cities|join:", " }}{% endif %}</h3>			
+		{% for way in possible_ways %}
+		{% if forloop.first %}<h4>Fastest route:</h4>{% endif %}
+		<table class="table table-sm route-table">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">The sequence of trains on the route. Total time: {{way.total_time}} hours.</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for train in way.route %}
+				<tr>
+					<th scope="row">{{ forloop.counter }}</th>
+					<td>{{ train }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% if forloop.first and possible_ways|length > 1%}<h4>Other routes:</h4>{% endif %}
+		{% endfor%}					
 	</div>
-	
 	{% endif %}
-
-	<div class="row">
+	<div class="col-md-4 mx-auto">
 		<form method="POST" action="{%url 'routes:find-routes' %}">
 			{% csrf_token %}
 			{{ form|crispy}}
@@ -36,5 +42,4 @@
 		</form>
 	</div>
 </div>
-
 {% endblock content %}

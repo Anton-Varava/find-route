@@ -9,7 +9,7 @@ from .forms import TrainCreateForm
 # Create your views here.
 class TrainListView(ListView):
     model = Train
-    paginate_by = 10
+    paginate_by = 15
     context_object_name = 'trains'
     ordering = ['number']
 

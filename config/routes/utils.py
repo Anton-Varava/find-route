@@ -1,6 +1,18 @@
 from trains.models import Train
 
 
+def timer_decorator(func):
+    def wrapper(*args, **kwargs):
+        import time
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        finish_time = time.time()
+        print(f'Lead time - {finish_time- start_time}')
+        return result
+    return wrapper
+
+
+@timer_decorator
 def make_graph(queryset_trains):
     graph = {}
     for train in queryset_trains:
@@ -9,6 +21,7 @@ def make_graph(queryset_trains):
     return graph
 
 
+@timer_decorator
 def get_possible_ways(graph, from_city, to_city, through_cities=None):
     queue_ = [(from_city, [])]
     while queue_:
@@ -23,6 +36,7 @@ def get_possible_ways(graph, from_city, to_city, through_cities=None):
                         yield route_trains
                 else:
                     queue_.append((train.to_city, route + [train]))
+            del graph[start]
 
 
 def _get_cities_from_route_trains(route_trains):
@@ -32,16 +46,6 @@ def _get_cities_from_route_trains(route_trains):
             cities.append(train.from_city)
         cities.append(train.to_city)
     return set(cities)
-
-
-def find_fastest_way(routes: list):
-    fastest_way = {'fastest_time': None, 'fastest_route': []}
-    for route in routes:
-        way_time = get_full_route_time(route)
-        if not fastest_way['fastest_time'] or fastest_way['fastest_time'] > way_time:
-            fastest_way['fastest_time'] = way_time
-            fastest_way['fastest_route'] = route
-    return fastest_way
 
 
 def get_full_route_time(route):
@@ -56,9 +60,11 @@ def get_context_for_routes_view(form):
     from_city = data['from_city']
     to_city = data['to_city']
     through_cities = data['through_cities'] if data['through_cities'] else []
-    qs = Train.objects.all()
+    qs = Train.objects.all().select_related('from_city', 'to_city')
     graph = make_graph(qs)
-    possible_ways = sorted(list(get_possible_ways(graph, from_city, to_city, through_cities)), key=get_full_route_time)
+    possible_ways = sorted([{'route': route, 'total_time': get_full_route_time(route)}
+                            for route in list(get_possible_ways(graph, from_city, to_city, through_cities))],
+                           key=lambda way: way['total_time'])
 
     context = {'from_city': from_city, 'to_city': to_city}
     if possible_ways:
@@ -67,4 +73,6 @@ def get_context_for_routes_view(form):
         context['through_cities'] = [city.title for city in through_cities]
 
     return context
+
+
 

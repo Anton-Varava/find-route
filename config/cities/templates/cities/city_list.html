@@ -1,50 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <ul>
-        {% for city in cities %}        
-        <li>
-        	<div class="row">
-	        	<div class="col-sm">
-	        		<p>{{ city.title }}</p>	
-	        	</div>
-	        	<div class="col-sm">
-					<a type="button" class="btn btn-secondary" href="{% url 'cities:update-city' pk=city.pk %}">
-						<i class="far fa-edit"></i>
-					</a>
-						
-									
-					
-					<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteCity">
-						Delete
-					</button>					
-
-					<!-- Modal deleteTrain -->
-					<div class="modal fade" id="deleteCity" tabindex="-1" role="dialog" aria-labelledby="deleteCityLabel" aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="deleteTrainLabel">Delete city</h5>
-
-								</div>
-								<div class="modal-body">
-									<p>Are you sure you want delete city - "{{ city }}"?</p>
-								</div>
-								<div class="modal-footer">
-									<form action="{% url 'cities:delete-city' pk=city.pk %}" method="POST">
-										{% csrf_token %}
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-										<button type="submit" class="btn btn-primary">Delete</button>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>   	
-				</div>
-        </div></li>
-        {% endfor %}
-    </ul>    
-    <a class="btn btn-primary" href="{% url 'cities:add-city' %}" role="button">Add city</a>
+<h1>Cities list</h1>
+<div class="row">
+	<div class="col-md-8 mx-auto">
+		<a class="btn btn-primary add-city-button" href="{% url 'cities:add-city' %}" role="button">Add city</a>
+		<table class="table table-sm cities-table">
+			<thead>
+				<tr>
+					<th scope="col">Title</th>
+			</thead>
+			<tbody>
+				{% for city in cities %}
+				<tr>
+					<td>{{ city.title }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>			
+		</table>
+	</div>
+	{% include 'pagination.html'%}
 </div>
 {% endblock content %}
